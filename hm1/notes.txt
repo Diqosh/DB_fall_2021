@@ -1,0 +1,4 @@
+superkey if K unique element of column
+candidate key
+primary key
+foreign key referncing, referenced
