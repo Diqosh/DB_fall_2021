@@ -1,4 +1,5 @@
-superkey if K unique element of column
+superkey if K unique element of column != null
 candidate key
 primary key
 foreign key referncing, referenced
+
