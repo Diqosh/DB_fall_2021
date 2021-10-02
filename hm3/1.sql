@@ -1,3 +1,40 @@
+-- 1.a
+select title
+from course
+where credits > 3;
+
+-- 1.b
+select room_number
+from classroom
+where building = 'Watson'
+   or building = 'Packard';
+
+--1.c
+select *
+from course
+where dept_name = 'Comp. Sci.';
+
+-- 1.d
+
+select title
+from course
+where course_id in (select course_id
+                    from takes
+                    where semester = 'Fall');
+
+--1.e
+select name
+from student
+where tot_cred between 44 and 89;
+
+--1.f
+select name
+from student
+where lower(name) like '%a'
+   or lower(name) like '%e'
+   or lower(name) like '%i'
+   or lower(name) like '%o'
+   or lower(name) like '%u';
 
 --1.g
 
