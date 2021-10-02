@@ -144,11 +144,13 @@ where course_id in (select distinct course_id
 
 --3.d
 
-select id
-from teaches
-where( course_id, sec_id, semester, year) in (select (course_id, sec_id, semester, year) as pk
-                                        from takes
-                                        where grade != 'A');
+select name
+from instructor
+where id in (select distinct id
+from teaches                                                --select who dont give A
+where( course_id, sec_id, semester, year) in (select course_id, sec_id, semester, year as pk
+                                        from takes                                                 --select pk who dont give A
+                                        where grade != 'A'));
 
 
 --3.e
