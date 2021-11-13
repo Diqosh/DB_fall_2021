@@ -38,23 +38,7 @@
             inner join dealer  on dealer.id = client.dealer_id
         where dealer.charge > 0.12;
 
---1.h
-    select client_id, count(client_id) as made_purchase
-        from sell
-            inner join client  on client.id = sell.client_id
-                inner join dealer  on client.dealer_id = dealer.id
-        group by (client_id);
 
---1.i
-
-
-select sell.client_id, client.name, client.priority, dealer.name,sell.id,sell.amount
-from sell
-inner join client on sell.client_id = client.id
-inner join dealer on sell.dealer_id = dealer.id
-Where priority is not Null
-group by sell.client_id, client.name, client.priority, dealer.name, sell.id
-having sum(Amount) > 2000;
 
 --a)
 
