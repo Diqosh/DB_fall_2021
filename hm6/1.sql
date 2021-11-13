@@ -54,21 +54,25 @@ inner join client on sell.client_id = client.id
 inner join dealer on sell.dealer_id = dealer.id
 Where priority is not Null
 group by sell.client_id, client.name, client.priority, dealer.name, sell.id
-having sum(Amount) > 2000
+having sum(Amount) > 2000;
 
 --a)
-Create view total_avg (date,total)
-AS
-Select date,count(id)
-from sell
-group by date
-select total_avg.date,total, avg(total)
-from sell,total_avg
-group by total_avg.date,total
 
+
+
+
+create view a as
+select  date,  count(distinct (client_id)) as unique_client, sum(amount) as total, avg(amount) as avg
+from sell
+group by  date
+order by  date;
+
+select * from a;
+drop view a;
 
 --b)
-create view greatest_amount(date,sum)
+
+create view b(date,sum)
 as
     SELECT date,sum(amount)
     from sell
@@ -76,49 +80,62 @@ as
     order by sum(amount) DESC
     LIMIT 5;
 Select *
-from greatest_amount;
+from b;
+drop view b;
 
---c)
-create view tot_avg_dealer(dealer_id,total)
-AS
-    SELECT dealer_id,count(id)
+
+--2c
+CREATE VIEW c AS
+    select dealer_id, count(id) dealer_sale, avg(amount) avg_of_sales, sum(amount) as total
+    from sell
+    group by dealer_id;
+
+SELECT * from c;
+DROP VIEW c;
+
+--2d
+create view d as
+select dealer_id, sum(amount)
+from sell inner join dealer on
+        sell.dealer_id = dealer.id
+group by dealer_id;
+
+create view d1 as
+select  location, sum(d.sum*dealer.charge)
+from d inner join dealer on d.dealer_id = dealer.id
+group by location;
+
+
+SELECT * from d1;
+DROP VIEW d1;
+DROP VIEW d;
+
+--2e
+create view e as
+select location, count(sell.id), avg(amount), sum(amount) as tot
 from sell
-group by dealer_id
-select dealer_id,total,avg(total)
-from tot_avg_dealer
-group by dealer_id, total
+inner join dealer on
+    dealer_id = dealer.id
+group by location;
+select * from e;
+drop view e;
 
---d)
-create view dealers_earned(location,earned)
-as
-    select location,sum(amount*dealer.charge)
-from dealer,sell
-group by location
-select *
-from dealers_earned
+--2f
+create view f as
+select city, count(sell.id), avg(amount), sum(amount) as total
+from sell
+inner join client on
+    sell.client_id = client.id
+group by city;
+select * from f;
+drop view f;
 
---e)
-create view avg_tot_location(location,total,avg)
-as
-select dealer.location,sum(sell.amount),avg(amount)
-from dealer,sell
-where dealer.id = sell.dealer_id
-group by dealer.location
-select *
-from avg_tot_location
 
---f)
-create view avg_tot_client(city,total,avg)
-as
-select client.city,sum(amount),avg(amount)
-from client,sell
-where client.id = sell.client_id
-group by client.city
-select *
-from avg_tot_client
+--2g
+CREATE VIEW g AS
+    SELECT f.city
+    FROM e INNER JOIN f on e.location = f.city
+    WHERE f.total>e.tot;
 
---g)
-Select city,avg_tot_client.total,avg_tot_location.total
-from avg_tot_client
-full outer join avg_tot_location on city = location
-where avg_tot_client.total > avg_tot_location.total
+SELECT * from g;
+DROP VIEW g;
